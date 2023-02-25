@@ -28,14 +28,14 @@ states = {'v' 'alpha' 'teta' 'q'};
 inputs = {'deltaC' 'aprop'};
 outputs = {'v' 'alpha', 'teta', 'q', 'gamma'};
 
-sys = ss(A,B,C,D,'statename',states,...
+FTBO = ss(A,B,C,D,'statename',states,...
 'inputname',inputs,...
 'outputname',outputs);
 
 G = tf([33.7002], [1 5.8402 33.702])
 G2 = tf([0.0472], [ 1 0.0282 0.0472])
-x = tf(sys)
-% step(sys)
+x = tf(FTBO)
+% step(FTBO)
 % grid minor
 % figure()
 % subplot(3,2,1)
@@ -60,27 +60,62 @@ x = tf(sys)
 
 
 %% Dessin du lieu des racine
-x(1,2)
-[num, den] = tfdata(x(1,2))
+[num, den] = tfdata(x(1,2));
 num = num{1};
 den = den{1};
  
 
-[zeros, poles, K] = tf2zp(num, den)
-rlocus(x(1,2))
+[zeros, poles, K] = tf2zp(num, den);
+% rlocus(x(1,2))
+% [Kv,POLES] = rlocfind(FTBO(1,2))
+Kv = 1.0263;
+p = rlocus(x(1,2),1.0263);
+hold on
+grid minor
+% plot(p, 'p', 'markerSize', 15)
 
-% Ràgle 5
+% Regle 5
 phi = (sum(real(poles)) - sum(real(zeros)))
 
 %règle 6
 
 %% Règle 7
-A = zeros(1)
-B = poles(1)
-C = poles(3)
-D = zeros(3)
-E = poles(4)
-F = poles(2)
-G = zeros(2)
+ptA = zeros(1)
+ptB = poles(1)
+ptC = poles(3)
+ptD = zeros(3)
+ptE = poles(4)
+ptF = poles(2)
+ptG = zeros(2)
 
 calc_angle_racine
+
+%% n1/d1
+C1 = C([1,5], :);
+A1 = A - B(:,2)*Kv*C(1,:);
+B1 = B(:,1);
+D1 = [0 0]';
+
+states = {'v' 'alpha' 'teta' 'q'};
+inputs = {'deltaC'};
+outputs = {'v', 'gamma'};
+
+boucle_int = ss(A1, B1, C1, D1,'statename',states,...
+'inputname',inputs,...
+'outputname',outputs);
+
+figure()
+bode(Kv*FTBO(1,2))
+[Gm,Pm,Wcg,Wcp] = margin(FTBO(1,2))
+grid on
+
+%% Pour méthode analytique
+[num, den] = tfdata(FTBO(1,2));
+[R,P,K] = residue(num{1},den{1});
+
+C = abs(R)./(abs(real(P)))
+
+[num_red, den_red] = residue(R(3:4), P(3:4), K)
+
+FTBO_red = tf(num_red, den_red)
+rlocus(FTBO_red)
