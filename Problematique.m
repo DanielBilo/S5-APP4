@@ -24,6 +24,40 @@ D = [   0           0;
         0           0;
         0           0];
 
-sys = ss(A,B,C,D)
-% sys = tf(num, den)
+states = {'v' 'alpha' 'teta' 'q'};
+inputs = {'deltaC' 'aprop'};
+outputs = {'v' 'alpha', 'teta', 'q', 'gamma'};
+
+sys = ss(A,B,C,D,'statename',states,...
+'inputname',inputs,...
+'outputname',outputs);
+
+G = tf([33.7002], [1 5.8402 33.702])
+G2 = tf([0.0472], [ 1 0.0282 0.0472])
+x = tf(sys)
 step(sys)
+grid minor
+figure()
+subplot(3,2,1)
+bode(x(1,1))
+grid minor
+
+subplot(3,2,2)
+bode(x(2,1))
+grid minor
+
+subplot(3,2,3)
+bode(x(3,1))
+grid minor
+
+subplot(3,2,4)
+bode(x(4,1))
+grid minor
+
+subplot(3,2,5)
+bode(x(5,1))
+grid minor
+
+subplot(3,2,6)
+bode(x(6,1))
+grid minor
