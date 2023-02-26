@@ -91,14 +91,14 @@ ptG = zeros(2)
 calc_angle_racine
 
 %% n1/d1
-C1 = C([1,5], :);
-A1 = A - B(:,2)*Kv*C(1,:);
+C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
+A1 = A - B(:,2)*Kv*C(1,:); 
 B1 = B(:,1);
-D1 = [0 0]';
+D1 = [0]'; %Une sortie seulement
 
 states = {'v' 'alpha' 'teta' 'q'};
 inputs = {'deltaC'};
-outputs = {'v', 'gamma'};
+outputs = {'gamma'};
 
 boucle_int = ss(A1, B1, C1, D1,'statename',states,...
 'inputname',inputs,...
@@ -119,3 +119,70 @@ C = abs(R)./(abs(real(P)))
 
 FTBO_red = tf(num_red, den_red)
 rlocus(FTBO_red)
+
+%% Analyse de A1 B1 C1 D1
+
+[num_1, den_1] = ss2tf(A1, B1, C1, D1);
+TFBF_1 = tf(num_1,den_1);
+rlocus(TFBF_1);
+
+syms w kp
+value = expand(vpa(kp*(num_1(4)*w*i + num_1(5)) + (den_1(1)*(i*w)^4 + den_1(2)*(i*w)^3 + den_1(3)*(i*w)^2 + den_1(4)*(i*w) + den_1(5))))
+
+
+%%
+%Calcul simple pour déterminer kp: Prendre le point à
+%-180 (fréquence) trouver le gain à cette fréquence (11dB), Trouver combien
+%on doit diminuer la courbe pour avoir un GM de 6dB (-17dB ou -18dB).
+%Déterminer ce gain et le multiplier à TFBF_1
+figure();
+Kp = 0.1259;
+bode(Kp*TFBF_1)
+margin(Kp*TFBF_1)
+erreur = 1/(1+10^(4.47/20));
+disp(["L'erreur est de : " , erreur])
+
+
+%% Afficher la réponse à l'échelon
+%L'erreur en régime permanent est la même et l'erreur n'est pas nul
+figure()
+TFBF_1_FB = feedback(Kp*TFBF_1,1)
+step(TFBF_1_FB)
+xlim([0 14])
+disp(["L'erreur est de : " , 1-0.625])
+
+
+
+
+%% PD, PI, PID
+num_1_PD = Kp.*[1 1];
+den_1_PD = [1];
+num_1_PI = Kp.*[1 1];
+den_1_PI = [1 0];
+num_1_PID = Kp.*[1 1 1];
+den_1_PID = [1 0 0];
+
+
+tf_pd = tf(num_1_PD, den_1_PD);
+tf_pi = tf(num_1_PI, den_1_PI);
+tf_pid = tf(num_1_PID, den_1_PID);
+
+TFBO_1_p = Kp*TFBF_1;
+TFBO_1_pd = tf_pd*TFBF_1;
+TFBO_1_pi = tf_pi*TFBF_1;
+TFBO_1_pid = tf_pid*TFBF_1;
+
+TFBF_2_p = feedback(TFBO_1_p, 1);
+TFBF_2_pd = feedback(TFBO_1_pd, 1);
+TFBF_2_pi = feedback(TFBO_1_pi, 1);
+TFBF_2_pid = feedback(TFBO_1_pid, 1);
+
+figure();
+hold on
+step(TFBF_2_p)
+step(TFBF_2_pd)
+step(TFBF_2_pi)
+step(TFBF_2_pid)
+legend('p', 'pd', 'pi', 'pid')
+
+
