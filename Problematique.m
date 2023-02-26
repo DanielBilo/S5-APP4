@@ -126,8 +126,6 @@ rlocus(FTBO_red)
 TFBF_1 = tf(num_1,den_1);
 rlocus(TFBF_1);
 
-syms w kp
-value = expand(vpa(kp*(num_1(4)*w*i + num_1(5)) + (den_1(1)*(i*w)^4 + den_1(2)*(i*w)^3 + den_1(3)*(i*w)^2 + den_1(4)*(i*w) + den_1(5))))
 
 
 %%
@@ -136,10 +134,12 @@ value = expand(vpa(kp*(num_1(4)*w*i + num_1(5)) + (den_1(1)*(i*w)^4 + den_1(2)*(
 %on doit diminuer la courbe pour avoir un GM de 6dB (-17dB ou -18dB).
 %Déterminer ce gain et le multiplier à TFBF_1
 figure();
-Kp = 0.1259;
+bode(TFBF_1)
+margin(TFBF_1)
+Kp = 10^(((20*log10(gm)-6))/20);
 bode(Kp*TFBF_1)
 margin(Kp*TFBF_1)
-erreur = 1/(1+10^(4.47/20));
+erreur = 1/(1+10^(5.34/20));
 disp(["L'erreur est de : " , erreur])
 
 
@@ -149,7 +149,7 @@ figure()
 TFBF_1_FB = feedback(Kp*TFBF_1,1)
 step(TFBF_1_FB)
 xlim([0 14])
-disp(["L'erreur est de : " , 1-0.625])
+disp(["L'erreur est de : " , 1-0.65])
 
 
 
