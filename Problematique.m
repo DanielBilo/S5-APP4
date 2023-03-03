@@ -189,13 +189,14 @@ Kv = 1.0263;
 disp(["Kv trouvé : ", Kv])
 disp("Aucune intersection possible sur l'axe des imaginaire")
 
-% p = rlocus(x(1,2),1.0263);
-% hold on
-% plot(p, 'p', 'markerSize', 15)
+p = rlocus(x(1,2),1.0263);
+hold on
+plot(p, 'p', 'markerSize', 15)
 
-%[Kv,POLES] = rlocfind(FTBO(1,2))
+% [Kv,POLES] = rlocfind(FTBO(1,2))
 
 %% n1/d1 Conception de la boucle interne
+close all
 C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
 A1 = A - B(:,2)*Kv*C(1,:); 
 B1 = B(:,1);
@@ -211,6 +212,15 @@ boucle_int = ss(A1, B1, C1, D1,'statename',states,...
 
 figure()
 bode(Kv*FTBO(1,2))
+
+h = bodeplot(Kv*FTBO(1,2));
+options = getoptions(h);
+options.Title.String = 'Lieu de Bode';
+options.XLabel.FontSize = 20;
+options.YLabel.FontSize = 20;
+options.Title.FontSize = 25;
+setoptions(h,options);
+
 [Gm,Pm,Wcg,Wcp] = margin(FTBO(1,2))
 disp(["Gain margin:", Gm])
 disp(["Phase margin:", Pm])
@@ -221,16 +231,18 @@ grid on
 
 
 %% Pour méthode analytique
+close all
 [num, den] = tfdata(FTBO(1,2));
 [R,P,K] = residue(num{1},den{1});
 Coef = abs(R)./(abs(real(P)))
 [num_red, den_red] = residue(R(3:4), P(3:4), K)
 FTBO_red = tf(num_red, den_red)
-disp(["Voir démarche pour nouveau Kv : ", -1.3])
+disp(["Voir démarche pour nouveau Kv : ", 1.3])
 disp("Fonction de transfert d'ordre 2 en boucle ouverte: ")
 figure();
 hold on
 FTBO_red
+grid on
 rlocus(FTBO_red)
 rlocus(x(1,2))
 
@@ -265,6 +277,7 @@ rlocus(TFBF_2);
 %-180 (fréquence) trouver le gain à cette fréquence (11dB), Trouver combien
 %on doit diminuer la courbe pour avoir un GM de 6dB (-17dB ou -18dB).
 %Déterminer ce gain et le multiplier à TFBF_1
+close all
 figure();
 hold on
 bode(TFBF_1)
