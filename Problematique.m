@@ -61,49 +61,63 @@ grid minor
 [num_tfva, den_tfva] = tfdata(x(1,2));
 num_tfva = num_tfva{1};
 den_tfva = den_tfva{1};
+FTVA = tf(num_tfva, den_tfva);
 
 %% Analyse des différents mode dynamique de l'avion
 clc
+close all
 figure();
+
+[R,P,K_res] = residue(num_tfva,den_tfva);
 
 [zeros, poles, K] = tf2zp(num_tfva, den_tfva);
 disp(["Valeur de TF pour la sortie v et l'entrée a: "])
 x(1,2)
-disp(["Valeur des poles pour le mode phygoide : ", poles(1)])
+disp(["Valeur des poles pour le mode phugoide : ", poles(1)])
 disp(["Valeur des poles pour le mode short-period : ", poles(3)])
-disp(["Analyse du mode phygoide : "])
-phi_phy = atan(imag(poles(1))/abs(real(poles(1))));
-zeta_phy = cos(phi_phy);
-R_phy = abs(poles(1));
-wn_phy = cos(phi_phy)*R_phy/zeta_phy;
-wa_phy = wn_phy*(1-zeta_phy^2)^0.5;
-Mp_phy = 100*exp(-pi/tan(phi_phy));
-ts_phy = 4/(zeta_phy*wn_phy);
+disp(["Analyse du mode phugoide : "])
+phi_phu = atan(imag(poles(3))/abs(real(poles(3))));
+zeta_phu = cos(phi_phu);
+R_phu = abs(poles(3));
+wn_phu = R_phu;
+wa_phu = wn_phu*(1-zeta_phu^2)^0.5;
+Mp_phu = 100*exp(-pi/tan(phi_phu));
+ts_phu = 4/(zeta_phu*wn_phu);
 
-disp(["Valeur de phi : ", phi_phy]);
-disp([ "Valeur de zeta : ", zeta_phy]);
-disp([ "Valeur de R : ", R_phy]);
-disp(["Valeur de wn : ", wn_phy]);
-disp(["Valeur de wa :", wa_phy]);
-disp([ "Valeur de Mp : " Mp_phy]);
-disp([ "Temps de stabilisation (2%)", ts_phy]);
-[phygoid_num, phygoid_den] = zp2tf( [], poles(1:2), 1);
-disp("Fonction de transfert de Phygoid: ")
-G_phygoid = 33.74*tf(phygoid_num, phygoid_den)
+disp(["Valeur de phi : ", phi_phu]);
+disp([ "Valeur de zeta : ", zeta_phu]);
+disp([ "Valeur de R : ", R_phu]);
+disp(["Valeur de wn : ", wn_phu]);
+disp(["Valeur de wa :", wa_phu]);
+disp([ "Valeur de Mp : " Mp_phu]);
+disp([ "Temps de stabilisation (2%)", ts_phu]);
+
+disp("Fonction de transfert de Phugoid: ")
+G_phu_num = [R(3)+R(4) -R(3)*P(4)-R(4)*P(3)];
+G_phu_den = [1 -P(3)-P(4) P(3)*P(4)];
+G_phu = tf(G_phu_num, G_phu_den)
 
 disp("Valeur théorique de matlab:")
-damp(G_phygoid)
-step(G_phygoid)
+damp(G_phu)
+[y,t] = step(G_phu);
+plot(t,y,'LineWidth',3)
+xlabel('temps(s)', 'FontSize',20)
+ylabel('Amplitude', 'FontSize',20)
+ax = gca;
+ax.FontSize = 15;  % Font Size of 15
+title('Réponse échelon du mode dynamique phugoide', FontSize=25)
+grid minor
 
 figure();
 disp(["Analyse du mode short-period : "])
-phi_sp = atan(imag(poles(3))/abs(real(poles(3))));
+phi_sp = atan(imag(poles(1))/abs(real(poles(1))));
 zeta_sp = cos(phi_sp);
 R_sp = abs(poles(1));
 wn_sp = cos(phi_sp)*R_sp/zeta_sp;
 wa_sp = wn_sp*(1-zeta_sp^2)^0.5;
 Mp_sp = 100*exp(-pi/tan(phi_sp));
 ts_sp = 4/(zeta_sp*wn_sp);
+grid minor
 
 disp(["Valeur de phi : ", phi_sp]);
 disp([ "Valeur de zeta : ", zeta_sp]);
@@ -112,17 +126,41 @@ disp(["Valeur de wn : ", wn_sp]);
 disp(["Valeur de wa :", wa_sp]);
 disp([ "Valeur de Mp : " Mp_sp]);
 disp([ "Temps de stabilisation (2%)", ts_sp]);
-[sp_num, sp_den] = zp2tf( [], poles(3:4), 1);
-disp("Fonction de transfert de Phygoid: ")
-G_sp = 0.04719*tf(sp_num, sp_den)
+
+disp("Fonction de transfert courte période: ")
+
+G_sp_num = [R(1)+R(2) -R(1)*P(2)-R(2)*P(1)];
+G_sp_den = [1 -P(1)-P(2) P(1)*P(2)];
+G_sp = tf(G_sp_num, G_sp_den)
 
 disp("Valeur théorique de matlab:")
 damp(G_sp)
-step(G_sp)
+[y,t] = step(G_sp);
+plot(t,y,'LineWidth',3)
+xlabel('temps(s)', 'FontSize',20)
+ylabel('Amplitude', 'FontSize',20)
+ax = gca;
+ax.FontSize = 15;  % Font Size of 15
+title('Réponse échelon du mode dynamique à courte période', FontSize=25)
+grid minor
 
 %% Dessin du lieu des racine
+close all
+rlocusplot(x(1,2))
 
-rlocus(x(1,2))
+hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
+hm(6).MarkerSize = 12;  
+hm(7).MarkerSize = 12; 
+hm(2).LineWidth = 2;
+hm(3).LineWidth = 2;
+hm(4).LineWidth = 2;
+hm(5).LineWidth = 2;
+title('Lieu des racines', FontSize=25)
+xlabel('Axe reel', 'FontSize',20)
+ylabel('Axe imaginaire','FontSize',20)
+xlim([-4 0])
+
+grid minor
 
 n = size(poles);
 n = n(1);
@@ -151,10 +189,9 @@ Kv = 1.0263;
 disp(["Kv trouvé : ", Kv])
 disp("Aucune intersection possible sur l'axe des imaginaire")
 
-p = rlocus(x(1,2),1.0263);
-hold on
-grid minor
-plot(p, 'p', 'markerSize', 15)
+% p = rlocus(x(1,2),1.0263);
+% hold on
+% plot(p, 'p', 'markerSize', 15)
 
 %[Kv,POLES] = rlocfind(FTBO(1,2))
 
@@ -186,7 +223,7 @@ grid on
 %% Pour méthode analytique
 [num, den] = tfdata(FTBO(1,2));
 [R,P,K] = residue(num{1},den{1});
-C = abs(R)./(abs(real(P)))
+Coef = abs(R)./(abs(real(P)))
 [num_red, den_red] = residue(R(3:4), P(3:4), K)
 FTBO_red = tf(num_red, den_red)
 disp(["Voir démarche pour nouveau Kv : ", -1.3])
@@ -202,6 +239,7 @@ figure();
 hold on
 
 C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
+% C1 = C([1,5], :);
 A1 = A - B(:,2)*Kv*C(1,:); 
 B1 = B(:,1);
 D1 = [0]'; %Une sortie seulement
