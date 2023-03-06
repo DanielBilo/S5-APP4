@@ -38,24 +38,33 @@ x = tf(FTBO)
 step(FTBO)
 grid minor
 figure()
-subplot(3,2,1)
-bode(x(1,1))
-grid minor
+% subplot(3,2,1)
+% bode(x(1,1))
+% grid minor
+% 
+% subplot(3,2,2)
+% bode(x(2,1))
+% grid minor
+% 
+% subplot(3,2,3)
+% bode(x(3,1))
+% grid minor
+% 
+% subplot(3,2,4)
+% bode(x(4,1))
+% grid minor
 
-subplot(3,2,2)
-bode(x(2,1))
-grid minor
+% subplot(3,2,5)
+% bode(x(5,1))
 
-subplot(3,2,3)
-bode(x(3,1))
-grid minor
+h = bodeplot(x(5,1));
+options = getoptions(h);
+options.Title.String = 'Lieu de Bode';
+options.XLabel.FontSize = 20;
+options.YLabel.FontSize = 20;
+options.Title.FontSize = 25;
+setoptions(h,options);
 
-subplot(3,2,4)
-bode(x(4,1))
-grid minor
-
-subplot(3,2,5)
-bode(x(5,1))
 grid minor
 
 [num_tfva, den_tfva] = tfdata(x(1,2));
