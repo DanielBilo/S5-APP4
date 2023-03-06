@@ -254,6 +254,8 @@ close all
 Coef = abs(R)./(abs(real(P)))
 [num_red, den_red] = residue(R(3:4), P(3:4), K)
 FTBO_red = tf(num_red, den_red)
+Correction = (dcgain(FTBO(1,2))/dcgain(FTBO_red))
+FTBO_red = Correction*FTBO_red
 disp(["Voir démarche pour nouveau Kv : ", 1.2987])
 disp("Fonction de transfert d'ordre 2 en boucle ouverte: ")
 FTBO_red
@@ -289,6 +291,18 @@ xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
 grid minor
+
+[num_A, den_A] = tfdata(FTBO_red);
+num_A = num_A{1};
+den_A = den_A{1};
+
+A = num_A(2);
+B = num_A(3);
+C = den_A(2);
+D = den_A(3);
+
+disp()
+roots([A^2 (2*C*A - 4*B) (C^2-4*D)])
 
 %% Analyse de A1 B1 C1 D1
 close all
@@ -424,5 +438,11 @@ ylabel('Amplitude', 'Fontsize',20)
 legend('p', 'pd', 'pi', 'pid', 'Fontsize', 15)
 title('Réponse à l''échelon', 'Fontsize', 25)
 grid minor
+
+%%
+
+
+
+
 
 
