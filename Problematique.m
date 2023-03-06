@@ -73,8 +73,8 @@ den_tfva = den_tfva{1};
 FTVA = tf(num_tfva, den_tfva);
 
 %% Analyse des différents mode dynamique de l'avion
-clc
-close all
+% clc
+% close all
 figure();
 
 [R,P,K_res] = residue(num_tfva,den_tfva);
@@ -163,7 +163,7 @@ title('Réponse échelon des modes(ordre 4)', FontSize=25)
 grid minor
 
 %% Dessin du lieu des racine
-close all
+% close all
 rlocusplot(x(1,2))
 
 hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
@@ -213,7 +213,7 @@ plot(p, 'p', 'markerSize', 15)
 % [Kv,POLES] = rlocfind(FTBO(1,2))
 
 %% n1/d1 Conception de la boucle interne
-close all
+% close all
 C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
 A1 = A - B(:,2)*Kv*C(1,:); 
 B1 = B(:,1);
@@ -248,7 +248,7 @@ grid on
 
 
 %% Pour méthode analytique
-close all
+% close all
 [num, den] = tfdata(FTBO(1,2));
 [R,P,K] = residue(num{1},den{1});
 Coef = abs(R)./(abs(real(P)))
@@ -296,16 +296,15 @@ grid minor
 num_A = num_A{1};
 den_A = den_A{1};
 
-A = num_A(2);
-B = num_A(3);
-C = den_A(2);
-D = den_A(3);
+A0 = num_A(2);
+B0 = num_A(3);
+C0 = den_A(2);
+D0 = den_A(3);
 
-disp()
-roots([A^2 (2*C*A - 4*B) (C^2-4*D)])
+roots([A0^2 (2*C0*A0 - 4*B0) (C0^2-4*D0)])
 
 %% Analyse de A1 B1 C1 D1
-close all
+% close all
 figure();
 hold on
 
@@ -357,7 +356,7 @@ ylim([-8 8])
 %-180 (fréquence) trouver le gain à cette fréquence (11dB), Trouver combien
 %on doit diminuer la courbe pour avoir un GM de 6dB (-17dB ou -18dB).
 %Déterminer ce gain et le multiplier à TFBF_1
-close all
+% close all
 figure();
 hold on
 
@@ -389,20 +388,23 @@ TFBF_1_FB = feedback(Kp*TFBF_1,1)
 step(TFBF_1_FB)
 xlim([0 14])
 disp(["L'erreur est de : " , 0.3510])
+xlabel('Temps', 'Fontsize',20)
+ylabel('Amplitude', 'Fontsize',20)
+title('Réponse à l''échelon avec Kp', 'Fontsize', 25)
+grid minor
 
 
 
 
 %% PD, PI, PID
-close all
+% close all
 
-% num_1_PD = Kp.*[1 1];
-% den_1_PD = [1];
+num_1_PD = Kp.*[1 1];
+den_1_PD = [1];
 num_1_PI = Kp.*[1 1];
 den_1_PI = [1 0];
 num_1_PID = Kp.*[1 1 1];
 den_1_PID = [0 1 0];
-test = ss(A1, B1, C1, D1)
 
 C2 = C1
 A2 = A1 - B1*Kp*C2;
