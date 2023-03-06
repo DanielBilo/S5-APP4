@@ -237,7 +237,7 @@ close all
 Coef = abs(R)./(abs(real(P)))
 [num_red, den_red] = residue(R(3:4), P(3:4), K)
 FTBO_red = tf(num_red, den_red)
-disp(["Voir démarche pour nouveau Kv : ", 1.3])
+disp(["Voir démarche pour nouveau Kv : ", 1.2987])
 disp("Fonction de transfert d'ordre 2 en boucle ouverte: ")
 figure();
 hold on
@@ -247,6 +247,7 @@ rlocus(FTBO_red)
 rlocus(x(1,2))
 
 %% Analyse de A1 B1 C1 D1
+close all
 figure();
 hold on
 
@@ -260,7 +261,7 @@ D1 = [0]'; %Une sortie seulement
 TFBF_1 = tf(num_1,den_1);
 
 C1_2 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
-A1_2 = A - B(:,2)*1.3*C(1,:); 
+A1_2 = A - B(:,2)*1.2987*C(1,:); 
 B1_2 = B(:,1);
 D1_2 = [0]'; %Une sortie seulement
 
@@ -270,6 +271,27 @@ TFBF_2 = tf(num_2,den_2);
 rlocus(TFBF_1);
 rlocus(TFBF_2);
 
+hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
+hm(6).MarkerSize = 12;  
+hm(7).MarkerSize = 12; 
+hm(12).MarkerSize = 12;  
+hm(13).MarkerSize = 12; 
+hm(2).LineWidth = 2;
+hm(3).LineWidth = 2;
+hm(4).LineWidth = 2;
+hm(5).LineWidth = 2;
+hm(8).LineWidth = 2;
+hm(9).LineWidth = 2;
+hm(10).LineWidth = 2;
+hm(11).LineWidth = 2;
+title('Comparaison lieu de racine', FontSize=25)
+xlabel('Axe reel', 'FontSize',20)
+ylabel('Axe imaginaire','FontSize',20)
+
+legend('Kv = 1.0263', 'Kv = 1.2987', 'FontSize', 15)
+grid on
+xlim([-5 0])
+ylim([-8 8])
 
 
 %%
@@ -280,14 +302,26 @@ rlocus(TFBF_2);
 close all
 figure();
 hold on
-bode(TFBF_1)
+
+h = bodeplot(TFBF_1);
+options = getoptions(h);
+options.XLabel.FontSize = 20;
+options.YLabel.FontSize = 20;
+options.Title.FontSize = 25;
+setoptions(h,options);
+
+
+
+
 margin(TFBF_1)
 [Gm, Pm, wcg, wcp] = margin(TFBF_1)
 Kp = 10^(((20*log10(Gm)-6))/20);
-bode(Kp*TFBF_1)
-margin(Kp*TFBF_1)
+% bode(Kp*TFBF_1)
+% margin(Kp*TFBF_1)
 erreur = 1/(1+10^(5.34/20));
 disp(["L'erreur est de : " , erreur])
+grid on
+% legend('FTBF','FTBF*Kp', 'FontSize', 15)
 
 
 %% Afficher la réponse à l'échelon
@@ -302,6 +336,8 @@ disp(["L'erreur est de : " , 1-0.65])
 
 
 %% PD, PI, PID
+close all
+
 num_1_PD = Kp.*[1 1];
 den_1_PD = [1];
 num_1_PI = Kp.*[1 1];
