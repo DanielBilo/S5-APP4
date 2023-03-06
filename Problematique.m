@@ -144,6 +144,15 @@ ax.FontSize = 15;  % Font Size of 15
 title('Réponse échelon du mode dynamique à courte période', FontSize=25)
 grid minor
 
+[y,t] = step(G_sp*G_phu);
+plot(t,y,'LineWidth',3)
+xlabel('temps(s)', 'FontSize',20)
+ylabel('Amplitude', 'FontSize',20)
+ax = gca;
+ax.FontSize = 15;  % Font Size of 15
+title('Réponse échelon des modes(ordre 4)', FontSize=25)
+grid minor
+
 %% Dessin du lieu des racine
 close all
 rlocusplot(x(1,2))
@@ -159,7 +168,6 @@ title('Lieu des racines', FontSize=25)
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
-
 grid minor
 
 n = size(poles);
@@ -221,7 +229,7 @@ options.YLabel.FontSize = 20;
 options.Title.FontSize = 25;
 setoptions(h,options);
 
-[Gm,Pm,Wcg,Wcp] = margin(FTBO(1,2))
+[Gm,Pm,Wcg,Wcp] = margin(Kv*FTBO(1,2)) %%Kv
 disp(["Gain margin:", Gm])
 disp(["Phase margin:", Pm])
 disp(["Wcg : ", Wcg])
@@ -239,12 +247,39 @@ Coef = abs(R)./(abs(real(P)))
 FTBO_red = tf(num_red, den_red)
 disp(["Voir démarche pour nouveau Kv : ", 1.2987])
 disp("Fonction de transfert d'ordre 2 en boucle ouverte: ")
-figure();
-hold on
 FTBO_red
-grid on
+figure();
+subplot(2,1,1)
 rlocus(FTBO_red)
+hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
+hm(5).MarkerSize = 12;  
+hm(4).MarkerSize = 12; 
+hm(1).LineWidth = 2;
+hm(2).LineWidth = 2;
+hm(3).LineWidth = 2;
+
+title('Lieu des racines', FontSize=25)
+xlabel('Axe reel', 'FontSize',20)
+ylabel('Axe imaginaire','FontSize',20)
+xlim([-4 0])
+grid minor
+
+
+
+subplot(2,1,2)
 rlocus(x(1,2))
+hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
+hm(6).MarkerSize = 12;  
+hm(7).MarkerSize = 12; 
+hm(2).LineWidth = 2;
+hm(3).LineWidth = 2;
+hm(4).LineWidth = 2;
+hm(5).LineWidth = 2;
+title('Lieu des racines', FontSize=25)
+xlabel('Axe reel', 'FontSize',20)
+ylabel('Axe imaginaire','FontSize',20)
+xlim([-4 0])
+grid minor
 
 %% Analyse de A1 B1 C1 D1
 close all
@@ -330,7 +365,7 @@ figure()
 TFBF_1_FB = feedback(Kp*TFBF_1,1)
 step(TFBF_1_FB)
 xlim([0 14])
-disp(["L'erreur est de : " , 1-0.65])
+disp(["L'erreur est de : " , 0.3510])
 
 
 
@@ -338,24 +373,33 @@ disp(["L'erreur est de : " , 1-0.65])
 %% PD, PI, PID
 close all
 
-num_1_PD = Kp.*[1 1];
-den_1_PD = [1];
+% num_1_PD = Kp.*[1 1];
+% den_1_PD = [1];
 num_1_PI = Kp.*[1 1];
 den_1_PI = [1 0];
 num_1_PID = Kp.*[1 1 1];
-den_1_PID = [1 0 0];
+den_1_PID = [0 1 0];
+test = ss(A1, B1, C1, D1)
+
+C2 = C1
+A2 = A1 - B1*Kp*C2;
+B2 = B1*Kp;
+D2 = [0]';
+
+[n2, d2] = ss2tf(A2, B2, C2, D2);
+TFBF_2_p = tf(n2,d2)
 
 
 tf_pd = tf(num_1_PD, den_1_PD);
 tf_pi = tf(num_1_PI, den_1_PI);
 tf_pid = tf(num_1_PID, den_1_PID);
 
-TFBO_1_p = Kp*TFBF_1;
+% TFBO_1_p = Kp*TFBF_1;
 TFBO_1_pd = tf_pd*TFBF_1;
 TFBO_1_pi = tf_pi*TFBF_1;
 TFBO_1_pid = tf_pid*TFBF_1;
 
-TFBF_2_p = feedback(TFBO_1_p, 1);
+% TFBF_2_p = feedback(TFBO_1_p, 1);
 TFBF_2_pd = feedback(TFBO_1_pd, 1);
 TFBF_2_pi = feedback(TFBO_1_pi, 1);
 TFBF_2_pid = feedback(TFBO_1_pid, 1);
@@ -366,6 +410,10 @@ step(TFBF_2_p)
 step(TFBF_2_pd)
 step(TFBF_2_pi)
 step(TFBF_2_pid)
-legend('p', 'pd', 'pi', 'pid')
+xlabel('Temps', 'Fontsize',20)
+ylabel('Amplitude', 'Fontsize',20)
+legend('p', 'pd', 'pi', 'pid', 'Fontsize', 15)
+title('Réponse à l''échelon', 'Fontsize', 25)
+grid minor
 
 
