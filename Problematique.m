@@ -38,24 +38,6 @@ x = tf(FTBO)
 step(FTBO)
 grid minor
 figure()
-% subplot(3,2,1)
-% bode(x(1,1))
-% grid minor
-% 
-% subplot(3,2,2)
-% bode(x(2,1))
-% grid minor
-% 
-% subplot(3,2,3)
-% bode(x(3,1))
-% grid minor
-% 
-% subplot(3,2,4)
-% bode(x(4,1))
-% grid minor
-
-% subplot(3,2,5)
-% bode(x(5,1))
 
 h = bodeplot(x(5,1));
 options = getoptions(h);
@@ -64,7 +46,6 @@ options.XLabel.FontSize = 20;
 options.YLabel.FontSize = 20;
 options.Title.FontSize = 25;
 setoptions(h,options);
-
 grid minor
 
 [num_tfva, den_tfva] = tfdata(x(1,2));
@@ -275,8 +256,6 @@ ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
 grid minor
 
-
-
 subplot(2,1,2)
 rlocus(x(1,2))
 hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
@@ -318,7 +297,7 @@ D1 = [0]'; %Une sortie seulement
 TFBF_1 = tf(num_1,den_1);
 
 C1_2 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
-A1_2 = A - B(:,2)*1.2987*C(1,:); 
+A1_2 = A - B(:,2)*1.3065*C(1,:); 
 B1_2 = B(:,1);
 D1_2 = [0]'; %Une sortie seulement
 
@@ -345,7 +324,7 @@ title('Comparaison lieu de racine', FontSize=25)
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 
-legend('Kv = 1.0263', 'Kv = 1.2987', 'FontSize', 15)
+legend('Kv = 1.0263', 'Kv = 1.3065', 'FontSize', 15)
 grid on
 xlim([-5 0])
 ylim([-8 8])
@@ -392,9 +371,6 @@ xlabel('Temps', 'Fontsize',20)
 ylabel('Amplitude', 'Fontsize',20)
 title('Réponse à l''échelon avec Kp', 'Fontsize', 25)
 grid minor
-
-
-
 
 %% PD, PI, PID
 % close all
