@@ -51,9 +51,9 @@ grid minor
 [num_tfva, den_tfva] = tfdata(x(1,2));
 num_tfva = num_tfva{1};
 den_tfva = den_tfva{1};
-<<<<<<< Updated upstream
+
 FTVA = tf(num_tfva, den_tfva);
-=======
+
 %% Déterminer les différents mode de l'avion
 clc
 [R,P,K] = residue(num_tfva, den_tfva)
@@ -65,7 +65,7 @@ tf_phygoide = tf(num_phygoide, den_phygoide)
 num_sp = R(3)*R(4);
 den_sp = P(3)*P(4);
 tf_sp = tf(num_sp, den_sp)
->>>>>>> Stashed changes
+
 
 %% Analyse des différents mode dynamique de l'avion
 % clc
@@ -109,7 +109,7 @@ xlabel('temps(s)', 'FontSize',20)
 ylabel('Amplitude', 'FontSize',20)
 ax = gca;
 ax.FontSize = 15;  % Font Size of 15
-title('Réponse échelon du mode dynamique phugoide', FontSize=25)
+title('Réponse échelon du mode dynamique phugoide')
 grid minor
 
 figure();
@@ -145,7 +145,7 @@ xlabel('temps(s)', 'FontSize',20)
 ylabel('Amplitude', 'FontSize',20)
 ax = gca;
 ax.FontSize = 15;  % Font Size of 15
-title('Réponse échelon du mode dynamique à courte période', FontSize=25)
+title('Réponse échelon du mode dynamique à courte période')
 grid minor
 
 [y,t] = step(G_sp*G_phu);
@@ -154,7 +154,7 @@ xlabel('temps(s)', 'FontSize',20)
 ylabel('Amplitude', 'FontSize',20)
 ax = gca;
 ax.FontSize = 15;  % Font Size of 15
-title('Réponse échelon des modes(ordre 4)', FontSize=25)
+title('Réponse échelon des modes(ordre 4)')
 grid minor
 
 %% Dessin du lieu des racine
@@ -168,7 +168,7 @@ hm(2).LineWidth = 2;
 hm(3).LineWidth = 2;
 hm(4).LineWidth = 2;
 hm(5).LineWidth = 2;
-title('Lieu des racines', FontSize=25)
+title('Lieu des racines')
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
@@ -246,11 +246,7 @@ grid on
 % close all
 [num, den] = tfdata(FTBO(1,2));
 [R,P,K] = residue(num{1},den{1});
-<<<<<<< Updated upstream
 Coef = abs(R)./(abs(real(P)))
-=======
-C_imp = abs(R)./(abs(real(P)))
->>>>>>> Stashed changes
 [num_red, den_red] = residue(R(3:4), P(3:4), K)
 FTBO_red = tf(num_red, den_red)
 Correction = (dcgain(FTBO(1,2))/dcgain(FTBO_red))
@@ -306,12 +302,7 @@ figure();
 hold on
 
 C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
-<<<<<<< Updated upstream
-% C1 = C([1,5], :);
-A1 = A - B(:,2)*Kv*C(1,:); 
-=======
 A1 = A - B(:,2)*Kv*C1; 
->>>>>>> Stashed changes
 B1 = B(:,1);
 D1 = [0]'; %Une sortie seulement
 
@@ -319,11 +310,8 @@ D1 = [0]'; %Une sortie seulement
 TFBF_1 = tf(num_1,den_1);
 
 C1_2 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
-<<<<<<< Updated upstream
 A1_2 = A - B(:,2)*1.3065*C(1,:); 
-=======
-A1_2 = A - B(:,2)*1.3*C1; 
->>>>>>> Stashed changes
+A1_2 = A - B(:,2)*1.3065*C1; 
 B1_2 = B(:,1);
 D1_2 = [0]'; %Une sortie seulement
 
