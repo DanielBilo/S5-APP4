@@ -264,7 +264,7 @@ hm(1).LineWidth = 2;
 hm(2).LineWidth = 2;
 hm(3).LineWidth = 2;
 
-title('Lieu des racines', FontSize=25)
+title('Lieu des racines')
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
@@ -279,7 +279,7 @@ hm(2).LineWidth = 2;
 hm(3).LineWidth = 2;
 hm(4).LineWidth = 2;
 hm(5).LineWidth = 2;
-title('Lieu des racines', FontSize=25)
+title('Lieu des racines')
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 xlim([-4 0])
@@ -302,7 +302,7 @@ figure();
 hold on
 
 C1 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
-A1 = A - B(:,2)*Kv*C1; 
+A1 = A - B(:,2)*Kv*C(1,:) 
 B1 = B(:,1);
 D1 = [0]'; %Une sortie seulement
 
@@ -311,7 +311,6 @@ TFBF_1 = tf(num_1,den_1);
 
 C1_2 = C(5, :); %Enlever C(1) car c'est une sortie qui ne sera pas utilisé
 A1_2 = A - B(:,2)*1.3065*C(1,:); 
-A1_2 = A - B(:,2)*1.3065*C1; 
 B1_2 = B(:,1);
 D1_2 = [0]'; %Une sortie seulement
 
@@ -334,7 +333,7 @@ hm(8).LineWidth = 2;
 hm(9).LineWidth = 2;
 hm(10).LineWidth = 2;
 hm(11).LineWidth = 2;
-title('Comparaison lieu de racine', FontSize=25)
+title('Comparaison lieu de racine')
 xlabel('Axe reel', 'FontSize',20)
 ylabel('Axe imaginaire','FontSize',20)
 
